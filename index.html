@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌦 WeatherSphere | Smart Forecast</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1163/1163661.png">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="Style.css">
+</head>
+
+<body class="default-bg">
+
+  <!-- Animated Background Layer -->
+  <div class="animated-bg"></div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Fade Wrapper -->
+  <div class="fade-wrapper" id="fadeWrapper">
+
+    <div class="container">
+
+      <!-- Header -->
+      <div class="header">
+        <h2>WeatherSphere</h2>
+        <div class="weather-input">
+          <input type="text" id="city_input" placeholder="Search city...">
+
+          <button id="searchBtn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+
+          <button id="locationBtn">
+            <i class="fa-solid fa-location-crosshairs"></i>
+          </button>
+
+          <button id="unitToggle">°F</button>
+        </div>
+      </div>
+
+      <div class="weather-data">
+
+        <!-- LEFT SIDE -->
+        <div class="weather-left">
+
+          <!-- Current Weather -->
+          <div class="card">
+            <div class="current-weather">
+              <div class="details">
+                <p>Now</p>
+                <h2 id="currentTemp">--°C</h2>
+                <p id="weatherDesc">--</p>
+              </div>
+              <div class="weather-icon">
+                <img id="weatherIcon" src="https://openweathermap.org/img/wn/04d@2x.png" alt="Weather Icon">
+              </div>
+            </div>
+            <hr>
+            <div class="card-footer">
+              <p><i class="fa-regular fa-calendar"></i> <span id="currentDate">--</span></p>
+              <p><i class="fa-solid fa-location-dot"></i> <span id="currentCity">--</span></p>
+            </div>
+          </div>
+
+          <!-- 5 Day Forecast -->
+          <div class="card">
+            <h2>5 Day Forecast</h2>
+            <div class="day-forecast"></div>
+          </div>
+
+          <!-- Temperature Trend Chart -->
+          <div class="card">
+            <h2>Temperature Trend</h2>
+            <canvas id="tempChart"></canvas>
+          </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="weather-right">
+
+          <h2>Today's Highlights</h2>
+
+          <div class="highlights">
+
+            <!-- AQI -->
+            <div class="card">
+              <div class="card-head">
+                <p>Air Quality Index</p>
+                <p class="air-index aqi-1" id="aqiStatus">--</p>
+              </div>
+              <div class="air-indices">
+                <i class="fa-solid fa-wind fa-3x"></i>
+
+                <div class="items"><p>PM2.5</p><h2 id="pm2">--</h2></div>
+                <div class="items"><p>PM10</p><h2 id="pm10">--</h2></div>
+                <div class="items"><p>SO2</p><h2 id="so2">--</h2></div>
+                <div class="items"><p>CO</p><h2 id="co">--</h2></div>
+                <div class="items"><p>NO</p><h2 id="no">--</h2></div>
+                <div class="items"><p>NO2</p><h2 id="no2">--</h2></div>
+                <div class="items"><p>NH3</p><h2 id="nh3">--</h2></div>
+                <div class="items"><p>O3</p><h2 id="o3">--</h2></div>
+              </div>
+            </div>
+
+            <!-- Sunrise / Sunset -->
+            <div class="card">
+              <div class="card-head"><p>Sunrise & Sunset</p></div>
+              <div class="sunrise-sunset">
+                <div class="item">
+                  <i class="fa-solid fa-sun fa-3x"></i>
+                  <div><p>Sunrise</p><h2 id="sunriseTime">--</h2></div>
+                </div>
+                <div class="item">
+                  <i class="fa-solid fa-moon fa-3x"></i>
+                  <div><p>Sunset</p><h2 id="sunsetTime">--</h2></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Highlights -->
+            <div class="card"><div class="card-head"><p>Humidity</p></div><div class="card-item"><i class="fa-solid fa-droplet"></i><h2 id="humidityVal">--%</h2></div></div>
+            <div class="card"><div class="card-head"><p>Pressure</p></div><div class="card-item"><i class="fa-solid fa-gauge"></i><h2 id="pressureVal">-- hPa</h2></div></div>
+            <div class="card"><div class="card-head"><p>Visibility</p></div><div class="card-item"><i class="fa-solid fa-eye"></i><h2 id="visibilityVal">-- km</h2></div></div>
+            <div class="card"><div class="card-head"><p>Wind Speed</p></div><div class="card-item"><i class="fa-solid fa-location-arrow"></i><h2 id="windspeedVal">-- m/s</h2></div></div>
+            <div class="card"><div class="card-head"><p>Feels Like</p></div><div class="card-item"><i class="fa-solid fa-temperature-three-quarters"></i><h2 id="feelsVal">--°C</h2></div></div>
+
+          </div>
+
+          <!-- Hourly -->
+          <h2>Today at</h2>
+          <div class="hourly-forecast"></div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="Script.js"></script>
+
+</body>
+</html>
