@@ -14,7 +14,7 @@ function getWeatherIcon(condition) {
   switch (condition) {
     case "Clear": return "fa-sun";
     case "Clouds": return "fa-cloud";
-    case "Rain": return "fa-cloud-rain";
+    case "Rain":
     case "Drizzle": return "fa-cloud-rain";
     case "Thunderstorm": return "fa-bolt";
     case "Snow": return "fa-snowflake";
@@ -55,6 +55,14 @@ function getWeatherDetails(name, lat, lon, country) {
     .then(res => res.json())
     .then(data => {
 
+      console.log("Weather API Data:", data);
+
+      if (!data.weather) {
+        console.log("Weather data missing");
+        hideLoader();
+        return;
+      }
+
       const unitSymbol = currentUnit === "metric" ? "°C" : "°F";
 
       document.getElementById("currentTemp").innerText =
@@ -63,7 +71,6 @@ function getWeatherDetails(name, lat, lon, country) {
       document.getElementById("weatherDesc").innerText =
         data.weather[0].description;
 
-      /* 🔥 DYNAMIC NOW ICON */
       const iconClass = getWeatherIcon(data.weather[0].main);
       document.getElementById("weatherIcon").outerHTML =
         `<i id="weatherIcon" class="fa-solid ${iconClass} fa-4x"></i>`;
@@ -94,6 +101,15 @@ function getWeatherDetails(name, lat, lon, country) {
 
       document.getElementById("feelsVal").innerText =
         data.main.feels_like.toFixed(1) + unitSymbol;
+
+      /* 🔥 BACKGROUND FIX */
+      document.body.classList.remove("default-bg");
+      setWeatherBackground(data.weather[0].main);
+      pageFadeEffect();
+
+    })
+    .catch(err => {
+      console.log("Weather API Error:", err);
     });
 
   /* ===== AIR QUALITY ===== */
@@ -136,7 +152,6 @@ function getWeatherDetails(name, lat, lon, country) {
 
       const unitSymbol = currentUnit === "metric" ? "°C" : "°F";
 
-      /* Hourly */
       const hourlyContainer =
         document.querySelector(".hourly-forecast");
       hourlyContainer.innerHTML = "";
@@ -159,7 +174,6 @@ function getWeatherDetails(name, lat, lon, country) {
         `;
       });
 
-      /* 5 Days */
       const dayContainer =
         document.querySelector(".day-forecast");
       dayContainer.innerHTML = "";
@@ -175,7 +189,6 @@ function getWeatherDetails(name, lat, lon, country) {
 
         const item = dailyMap[day];
         const iconClass = getWeatherIcon(item.weather[0].main);
-        
 
         dayContainer.innerHTML += `
           <div class="forecast-item">
@@ -186,7 +199,6 @@ function getWeatherDetails(name, lat, lon, country) {
         `;
       });
 
-      /* Trend */
       const temps = data.list.slice(0, 8)
         .map(item => item.main.temp.toFixed(1));
 
@@ -202,7 +214,6 @@ function getWeatherDetails(name, lat, lon, country) {
           data: {
             labels: labels,
             datasets: [{
-              label: currentUnit === "metric" ? "Temperature °C" : "Temperature °F",
               data: temps,
               borderColor: "#38bdf8",
               tension: 0.4
@@ -217,8 +228,6 @@ function getWeatherDetails(name, lat, lon, country) {
       );
 
       hideLoader();
-      setWeatherBackground(data.weather[0].main);
-        pageFadeEffect();
     });
 }
 
@@ -254,27 +263,6 @@ function getUserCoordinates() {
   });
 }
 
-/* ================= UNIT TOGGLE ================= */
-document.getElementById("unitToggle").addEventListener("click", () => {
-
-  if (currentUnit === "metric") {
-    currentUnit = "imperial";
-    document.getElementById("unitToggle").innerText = "°C";
-  } else {
-    currentUnit = "metric";
-    document.getElementById("unitToggle").innerText = "°F";
-  }
-
-  if (currentCityData) {
-    getWeatherDetails(
-      currentCityData.name,
-      currentCityData.lat,
-      currentCityData.lon,
-      currentCityData.country
-    );
-  }
-});
-
 /* ================= EVENTS ================= */
 searchBtn.addEventListener("click", getCityCoordinates);
 locationBtn.addEventListener("click", getUserCoordinates);
@@ -284,6 +272,7 @@ cityInput.addEventListener("keyup", e => {
 
 window.addEventListener("load", getUserCoordinates);
 
+/* ================= BACKGROUND ================= */
 function setWeatherBackground(condition) {
 
   document.body.classList.remove(
@@ -291,37 +280,23 @@ function setWeatherBackground(condition) {
   );
 
   switch (condition) {
-    case "Clear":
-      document.body.classList.add("clear");
-      break;
-    case "Clouds":
-      document.body.classList.add("clouds");
-      break;
+    case "Clear": document.body.classList.add("clear"); break;
+    case "Clouds": document.body.classList.add("clouds"); break;
     case "Rain":
-    case "Drizzle":
-      document.body.classList.add("rain");
-      break;
-    case "Snow":
-      document.body.classList.add("snow");
-      break;
-    case "Thunderstorm":
-      document.body.classList.add("thunderstorm");
-      break;
+    case "Drizzle": document.body.classList.add("rain"); break;
+    case "Snow": document.body.classList.add("snow"); break;
+    case "Thunderstorm": document.body.classList.add("thunderstorm"); break;
   }
 }
+
 function pageFadeEffect(){
-
   const container = document.querySelector(".container");
-
   container.classList.add("fade-out");
-
   setTimeout(()=>{
     container.classList.remove("fade-out");
     container.classList.add("fade-in");
-
     setTimeout(()=>{
       container.classList.remove("fade-in");
     },300);
-
   },150);
 }
